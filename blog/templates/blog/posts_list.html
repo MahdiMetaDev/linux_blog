@@ -1,0 +1,23 @@
+{% extends '_base.html' %}
+
+
+{% block blog_title %}
+    POSTS_LIST
+{% endblock blog_title %}
+
+
+{% block content %}
+
+    <h1>BLOG-POSTS</h1>
+    
+    <hr>
+
+    {% for post in posts %}
+        <ul>
+            <li>
+                <h3>{{ post.title }}</h3>
+            </li>
+        </ul>
+    {% endfor %}
+
+{% endblock content %}
