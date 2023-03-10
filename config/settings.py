@@ -129,6 +129,6 @@ AUTH_USER_MODEL = "accounts.CustomUser"
 # Django Email Config
 EMAIL_HOST = "smtp.gmail.com"
 EMAIL_PORT = 587
-EMAIL_HOST_USER = "mmf1344py@gmail.com"
+EMAIL_HOST_USER = env("DJANGO_EMAIL_HOST_USER")
 EMAIL_HOST_PASSWORD = env("DJANGO_EMAIL_HOST_PASSWORD")
 EMAIL_USE_TLS = True

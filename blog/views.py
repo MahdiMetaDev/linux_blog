@@ -1,6 +1,9 @@
 from django.shortcuts import render, get_object_or_404
 # from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.views import generic
+from django.core.mail import send_mail
+
+from environs import Env
 
 from .models import Post
 from .forms import EmailPostForm
@@ -54,6 +57,10 @@ def post_detail_view(request, year, month, day, post):
 def post_share(request, post_id):
     
     post = get_object_or_404(Post, id=post_id, status=Post.Status.PUBLISHED)
+    env = Env()
+    env.read_env()
+    sent = False
+    form = EmailPostForm()
 
     if request.method == "POST":
 
@@ -61,12 +68,18 @@ def post_share(request, post_id):
         
         if form.is_valid():
             cd = form.cleaned_data
+            post_url = request.build_absolute_uri(post.get_absolute_url)
+            subject = f"{cd['name']} recommends you read {post.title}"
+            message = f"Read {post.title} at {post_url}\n\n {cd['name']}\'s comments: " \
+                        f"{cd['comments']}"
+            send_mail(subject, message, env("DJANGO_EMAIL_HOST_USER"), [cd['to']])
+            sent = True
 
         else:
             form = EmailPostForm()    
         
-        return render(request, "blog/post_share.html", {
-            "post": post,
-            "form": form,
-        })
-        
+    return render(request, "blog/post_share.html", {
+        "post": post,
+        "form": form,
+        "sent": sent,
+    })
