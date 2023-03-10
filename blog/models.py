@@ -59,3 +59,30 @@ class Post(models.Model):
     def __str__(self):
 
         return self.title
+
+
+class Comment(models.Model):
+
+    post = models.ForeignKey(Post,
+                            on_delete=models.CASCADE,
+                            related_name="comments")
+
+    name = models.CharField(max_length=80)
+    email = models.EmailField()
+    body = models.TextField()
+    active = models.BooleanField(default=True)
+
+    datetime_created = models.DateTimeField(auto_now_add=True)
+    datetime_modified = models.DateTimeField(auto_now=True)
+    
+
+    class Meta:
+        ordering = ["datetime_created"]
+        indexes = [
+            models.Index(fields=["datetime_created"]),
+        ]
+
+    
+    def __str__(self):
+        
+        return f"Comment by {self.name} on {self.post}"
