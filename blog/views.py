@@ -2,11 +2,12 @@ from django.shortcuts import render, get_object_or_404
 # from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.views import generic
 from django.core.mail import send_mail
+from django.views.decorators.http import require_POST
 
 from environs import Env
 
-from .models import Post
-from .forms import EmailPostForm
+from .models import Post, Comment
+from .forms import EmailPostForm, CommentForm
 
 
 # def posts_list_view(request):
@@ -57,8 +58,10 @@ def post_detail_view(request, year, month, day, post):
 def post_share(request, post_id):
     
     post = get_object_or_404(Post, id=post_id, status=Post.Status.PUBLISHED)
+
     env = Env()
     env.read_env()
+    
     sent = False
     form = EmailPostForm()
 
@@ -82,4 +85,25 @@ def post_share(request, post_id):
         "post": post,
         "form": form,
         "sent": sent,
+    })
+
+
+@require_POST
+def post_comment(request, post_id):
+
+    post = get_object_or_404(Post, id=post_id, status=Post.Status.PUBLISHED)
+
+    comment = None
+
+    form = CommentForm(data=request.POST)
+
+    if form.is_valid():
+        comment = form.save(commit=False)
+        comment.post = post
+        comment.save()
+
+    return render(request, "blog/post_comment.html", {
+        "form": form,
+        "comment": comment,
+        "post": post,
     })
