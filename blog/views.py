@@ -49,10 +49,16 @@ def post_detail_view(request, year, month, day, post):
                             publish__year=year,
                             publish__month=month,
                             publish__day=day)
+
+    # we have used comments manager for post object.
+    comments = post.comments.filter(active=True)
+    form = CommentForm()
     
     return render(request,
                  "blog/post_detail.html",
-                 {"post": post})
+                 {"post": post,
+                  "comments": comments,
+                  "form": form})
 
 
 def post_share(request, post_id):
