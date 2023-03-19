@@ -33,7 +33,7 @@ class Post(models.Model):
     status = models.CharField(max_length=2,
                              choices=Status.choices,
                              default=Status.DRAFT)
-    tags = TaggableManager()                        
+    tags = TaggableManager()     # taggit third-party feature                   
     
     datetime_created = models.DateTimeField(auto_now_add=True)
     datetime_modified = models.DateTimeField(auto_now=True)
